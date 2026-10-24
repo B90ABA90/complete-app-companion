@@ -29,13 +29,15 @@ export function needsMp4Conversion(mime: string): boolean {
 /** Converts a recorded file (e.g. WebM) to an H.264 MP4 entirely in the browser. */
 export async function convertToMp4(input: Blob, onProgress: (ratio: number) => void): Promise<Blob> {
   const mb = await import('mediabunny');
-  if (!(await mb.canEncodeVideo('avc'))) throw new Error('Ce navigateur ne sait pas créer de MP4. Essaie avec Chrome, Edge ou Safari à jour.');
+  // H.264 plays everywhere (iPhone, WhatsApp, galleries); VP9-in-MP4 is the last resort.
+  const videoCodec = (await mb.canEncodeVideo('avc')) ? 'avc' : (await mb.canEncodeVideo('vp9')) ? 'vp9' : null;
+  if (!videoCodec) throw new Error('Ce navigateur ne sait pas créer de MP4. Essaie avec Chrome, Edge ou Safari à jour.');
   const audioCodec = (await mb.canEncodeAudio('aac')) ? 'aac' : 'opus';
   const output = new mb.Output({ format: new mb.Mp4OutputFormat({ fastStart: 'in-memory' }), target: new mb.BufferTarget() });
   const conversion = await mb.Conversion.init({
     input: new mb.Input({ source: new mb.BlobSource(input), formats: mb.ALL_FORMATS }),
     output,
-    video: { codec: 'avc', forceTranscode: true },
+    video: { codec: videoCodec, forceTranscode: true },
     audio: { codec: audioCodec },
     showWarnings: false,
   });
@@ -122,6 +124,13 @@ export async function exportWithSignature(
   try {
     v.src = objectUrl;
     await new Promise<void>((ok, ko) => { v.onloadedmetadata = () => ok(); v.onerror = () => ko(new Error('Cette vidéo ne peut pas être lue ici.')); });
+    // Browser-recorded WebM files often report no duration; seek to the end once to learn it.
+    if (!Number.isFinite(v.duration)) {
+      await new Promise<void>(ok => { const t = setTimeout(ok, 3000); v.ondurationchange = () => { if (Number.isFinite(v.duration)) { clearTimeout(t); ok(); } }; v.currentTime = 1e9; });
+      v.ondurationchange = null;
+      await new Promise<void>(ok => { const t = setTimeout(ok, 2000); v.onseeked = () => { clearTimeout(t); ok(); }; v.currentTime = 0; });
+      v.onseeked = null;
+    }
     const scale = Math.min(1, 1280 / Math.max(v.videoWidth || 720, v.videoHeight || 1280));
     const W = Math.round((v.videoWidth || 720) * scale / 2) * 2, H = Math.round((v.videoHeight || 1280) * scale / 2) * 2;
     const canvas = document.createElement('canvas'); canvas.width = W; canvas.height = H;
