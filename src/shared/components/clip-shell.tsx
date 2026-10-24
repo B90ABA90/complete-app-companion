@@ -1,15 +1,15 @@
 import { Link, useRouterState } from '@tanstack/react-router';
-import { Radio, User, ArrowLeft, Clapperboard } from 'lucide-react';
+import { User, ArrowLeft, Clapperboard } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { VinasoundBrand } from './vinasound-brand';
 
-const NAV = [{ to: '/', label: 'Vidéos', Icon: Clapperboard }, { to: '/lives', label: 'Lives', Icon: Radio }] as const;
-const isActive = (path: string, to: string) => to === '/lives' ? path === '/lives' || path.startsWith('/live/') : path !== '/lives' && !path.startsWith('/live/');
+const NAV = [{ to: '/', label: 'Vidéos', Icon: Clapperboard }] as const;
+const isActive = (_path: string, _to: string) => true;
 
 export function ClipNav({ standalone = false }: { standalone?: boolean }) {
   const path = useRouterState({ select: s => s.location.pathname });
-  return <nav aria-label="Navigation principale" className={`clip-nav absolute inset-x-0 bottom-0 z-20 grid grid-cols-2 border-t pb-[env(safe-area-inset-bottom)] ${standalone ? '' : 'md:hidden'}`}>
+  return <nav aria-label="Navigation principale" className={`clip-nav absolute inset-x-0 bottom-0 z-20 grid grid-cols-1 border-t pb-[env(safe-area-inset-bottom)] ${standalone ? '' : 'md:hidden'}`}>
     {NAV.map(({ to, label, Icon }) => { const on = isActive(path, to); return <Link key={to} to={to} aria-label={label} aria-current={on ? 'page' : undefined} className={`relative flex h-16 min-w-0 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors duration-200 active:scale-95 ${on ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
       {on && <span aria-hidden className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />}
       <><span className={`grid h-7 w-12 place-items-center rounded-full transition-colors duration-200 ${on ? 'bg-primary/15' : ''}`}><Icon className="size-5" strokeWidth={on ? 2.4 : 2} /></span><span className="truncate">{label}</span></>
