@@ -40,3 +40,4 @@
 - [ ] Verify browser video reception on real devices: the automated test machine cannot open direct video connections; add a relay (TURN) service if viewers on mobile networks can't connect.
 - [x] VINASOUND sidebar, Lives page (tabs, cards, empty state), 3-step create wizard, audio-only live display.
 - [x] AI summary of selected live chat messages for artists (questions + urgent topics).
+- [x] Full-screen hold-to-record camera with added sound auto-played and mixed in, progress ring, review (publish or delete/restart) and small settings; fake-camera hold→release→review→form verified. Real-device sound mixing not tested.

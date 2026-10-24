@@ -221,7 +221,7 @@ export function CameraRecorder({ onDone, onCancel }: { onDone: (file: File) => v
       {review ? <>
         <video src={review.url} autoPlay loop playsInline controls={false} className="absolute inset-0 h-full w-full object-cover" aria-label="Revoir la vidéo enregistrée" onClick={e => { const v = e.currentTarget; if (v.paused) void v.play(); else v.pause(); }} />
         <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-4 bg-gradient-to-t from-background/90 to-transparent px-5 pb-[calc(env(safe-area-inset-bottom)+2rem)] pt-16">
-          <button type="button" onClick={() => setReview(null)} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-secondary font-semibold"><RotateCcw className="size-5" />Supprimer et recommencer</button>
+          <button type="button" onClick={() => setReview(null)} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-secondary font-semibold"><RotateCcw className="size-5" />Recommencer</button>
           <button type="button" onClick={() => onDone(review.file)} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-destructive font-semibold text-destructive-foreground"><Check className="size-5" />Publier</button>
         </div>
       </> : <>
