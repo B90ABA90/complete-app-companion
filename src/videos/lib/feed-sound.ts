@@ -19,17 +19,17 @@ if (typeof window !== 'undefined') {
 }
 
 /** ~2s VINASOUND end signature: loud rising chime over a punchy, full bass (kick + sub + warm bass line). */
-export function playEndSignature() {
+export function playEndSignature(target?: { ctx: AudioContext; out: AudioNode }) {
   try {
-    if (!ctx) ctx = new AudioContext();
-    const c = ctx; void c.resume();
+    if (!target && !ctx) ctx = new AudioContext();
+    const c = target?.ctx ?? ctx!; void c.resume();
     const t0 = c.currentTime + 0.02;
     // Compressor + limiter-style settings keep the louder mix from clipping on phone speakers.
     const comp = c.createDynamicsCompressor();
     comp.threshold.value = -14; comp.knee.value = 6; comp.ratio.value = 8; comp.attack.value = 0.003; comp.release.value = 0.2;
     const master = c.createGain(); master.gain.value = 1.6;
     const bassBoost = c.createBiquadFilter(); bassBoost.type = 'lowshelf'; bassBoost.frequency.value = 160; bassBoost.gain.value = 9;
-    master.connect(bassBoost); bassBoost.connect(comp); comp.connect(c.destination);
+    master.connect(bassBoost); bassBoost.connect(comp); comp.connect(target?.out ?? c.destination);
 
     // Kick: fast pitch drop gives the "boom" at the start and on the last note.
     const kick = (t: number, vol: number) => {
