@@ -20,22 +20,12 @@ function importersOf(space: string): string[] {
     .sort();
 }
 
-describe('video and live spaces stay separated', () => {
-  it('keeps the video space free of live code', () => {
-    expect(importersOf('lives').filter(f => f.startsWith('src/videos/'))).toEqual([]);
+describe('lives space removed', () => {
+  it('no source file imports the removed live space', () => {
+    expect(importersOf('lives')).toEqual([]);
   });
 
-  it('keeps the live space free of video code', () => {
-    expect(importersOf('videos').filter(f => f.startsWith('src/lives/'))).toEqual([]);
-  });
-
-  it('keeps the shared base free of both spaces', () => {
+  it('keeps the shared base free of video code', () => {
     expect(importersOf('videos').filter(f => f.startsWith('src/shared/'))).toEqual([]);
-    expect(importersOf('lives').filter(f => f.startsWith('src/shared/'))).toEqual([]);
-  });
-
-  it('lets only the live pages reach the live space', () => {
-    const users = importersOf('lives').filter(f => !f.startsWith('src/test/') && !f.startsWith('src/lives/'));
-    expect(users).toEqual(['src/routes/live.$id.tsx', 'src/routes/lives.tsx']);
   });
 });

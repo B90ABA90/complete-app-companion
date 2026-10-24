@@ -12,13 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DecouvrirRouteImport } from './routes/decouvrir'
-import { Route as LivesRouteImport } from './routes/lives'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as ProfilRouteImport } from './routes/profil'
 import { Route as PublierRouteImport } from './routes/publier'
 import { Route as CreateurIdRouteImport } from './routes/createur.$id'
-import { Route as LiveIdRouteImport } from './routes/live.$id'
 import { Route as VideoIdRouteImport } from './routes/video.$id'
 import { Route as ApiPublicJobsExpireVideosRouteImport } from './routes/api/public/jobs/expire-videos'
 
@@ -35,11 +33,6 @@ const AuthRoute = AuthRouteImport.update({
 const DecouvrirRoute = DecouvrirRouteImport.update({
   id: '/decouvrir',
   path: '/decouvrir',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LivesRoute = LivesRouteImport.update({
-  id: '/lives',
-  path: '/lives',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MessagesRoute = MessagesRouteImport.update({
@@ -67,11 +60,6 @@ const CreateurIdRoute = CreateurIdRouteImport.update({
   path: '/createur/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LiveIdRoute = LiveIdRouteImport.update({
-  id: '/live/$id',
-  path: '/live/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const VideoIdRoute = VideoIdRouteImport.update({
   id: '/video/$id',
   path: '/video/$id',
@@ -88,13 +76,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/decouvrir': typeof DecouvrirRoute
-  '/lives': typeof LivesRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
   '/profil': typeof ProfilRoute
   '/publier': typeof PublierRoute
   '/createur/$id': typeof CreateurIdRoute
-  '/live/$id': typeof LiveIdRoute
   '/video/$id': typeof VideoIdRoute
   '/api/public/jobs/expire-videos': typeof ApiPublicJobsExpireVideosRoute
 }
@@ -102,13 +88,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/decouvrir': typeof DecouvrirRoute
-  '/lives': typeof LivesRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
   '/profil': typeof ProfilRoute
   '/publier': typeof PublierRoute
   '/createur/$id': typeof CreateurIdRoute
-  '/live/$id': typeof LiveIdRoute
   '/video/$id': typeof VideoIdRoute
   '/api/public/jobs/expire-videos': typeof ApiPublicJobsExpireVideosRoute
 }
@@ -117,13 +101,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/decouvrir': typeof DecouvrirRoute
-  '/lives': typeof LivesRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
   '/profil': typeof ProfilRoute
   '/publier': typeof PublierRoute
   '/createur/$id': typeof CreateurIdRoute
-  '/live/$id': typeof LiveIdRoute
   '/video/$id': typeof VideoIdRoute
   '/api/public/jobs/expire-videos': typeof ApiPublicJobsExpireVideosRoute
 }
@@ -133,13 +115,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/decouvrir'
-    | '/lives'
     | '/messages'
     | '/notifications'
     | '/profil'
     | '/publier'
     | '/createur/$id'
-    | '/live/$id'
     | '/video/$id'
     | '/api/public/jobs/expire-videos'
   fileRoutesByTo: FileRoutesByTo
@@ -147,13 +127,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/decouvrir'
-    | '/lives'
     | '/messages'
     | '/notifications'
     | '/profil'
     | '/publier'
     | '/createur/$id'
-    | '/live/$id'
     | '/video/$id'
     | '/api/public/jobs/expire-videos'
   id:
@@ -161,13 +139,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/decouvrir'
-    | '/lives'
     | '/messages'
     | '/notifications'
     | '/profil'
     | '/publier'
     | '/createur/$id'
-    | '/live/$id'
     | '/video/$id'
     | '/api/public/jobs/expire-videos'
   fileRoutesById: FileRoutesById
@@ -176,13 +152,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DecouvrirRoute: typeof DecouvrirRoute
-  LivesRoute: typeof LivesRoute
   MessagesRoute: typeof MessagesRoute
   NotificationsRoute: typeof NotificationsRoute
   ProfilRoute: typeof ProfilRoute
   PublierRoute: typeof PublierRoute
   CreateurIdRoute: typeof CreateurIdRoute
-  LiveIdRoute: typeof LiveIdRoute
   VideoIdRoute: typeof VideoIdRoute
   ApiPublicJobsExpireVideosRoute: typeof ApiPublicJobsExpireVideosRoute
 }
@@ -208,13 +182,6 @@ declare module '@tanstack/react-router' {
       path: '/decouvrir'
       fullPath: '/decouvrir'
       preLoaderRoute: typeof DecouvrirRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lives': {
-      id: '/lives'
-      path: '/lives'
-      fullPath: '/lives'
-      preLoaderRoute: typeof LivesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/messages': {
@@ -252,13 +219,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CreateurIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/live/$id': {
-      id: '/live/$id'
-      path: '/live/$id'
-      fullPath: '/live/$id'
-      preLoaderRoute: typeof LiveIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/video/$id': {
       id: '/video/$id'
       path: '/video/$id'
@@ -280,13 +240,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DecouvrirRoute: DecouvrirRoute,
-  LivesRoute: LivesRoute,
   MessagesRoute: MessagesRoute,
   NotificationsRoute: NotificationsRoute,
   ProfilRoute: ProfilRoute,
   PublierRoute: PublierRoute,
   CreateurIdRoute: CreateurIdRoute,
-  LiveIdRoute: LiveIdRoute,
   VideoIdRoute: VideoIdRoute,
   ApiPublicJobsExpireVideosRoute: ApiPublicJobsExpireVideosRoute,
 }

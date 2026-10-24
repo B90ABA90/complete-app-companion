@@ -1,41 +1,19 @@
-# VINASOUND — Vidéos et Lives
+# VINASOUND — Vidéos
 
 Application VINASOUND. Les deux espaces sont rangés dans des dossiers séparés pour pouvoir être
 téléchargés et repris indépendamment.
 
 ## Où se trouve quoi
 
+L'espace lives a été supprimé : l'application ne contient plus que les vidéos.
+
 | Dossier | Ce qu'il contient |
 | --- | --- |
-| `src/videos/` | **Espace vidéos** : fil, lecture, publication, likes et commentaires, partage, profil vidéo, durée de vie 24 h |
-| `src/lives/` | **Espace lives** : découverte des lives, salle, scène, invités, cadeaux, réglages du direct |
-| `src/shared/` | **Socle commun** : session, navigation, image VINASOUND, boutons de partage, utilitaires |
-| `src/routes/` | Les pages — une adresse = un fichier (`routeTree.gen.ts` est généré, ne pas le modifier) |
-| `src/components/ui/` | Bibliothèque d'interface (boutons, boîtes de dialogue…) |
-| `src/integrations/` | Accès à la base de données Lovable Cloud — fichiers générés, ne pas modifier |
-| `src/test/` | Tests automatiques |
+| `src/videos/` | Fil, lecture, publication, likes et commentaires, partage, profil vidéo, durée de vie 24 h |
+| `src/shared/` | Socle commun : session, navigation, image VINASOUND, partage, utilitaires |
+| `src/routes/` | Les pages (`routeTree.gen.ts` est généré, ne pas le modifier) |
 
-Les dossiers `src/videos/` et `src/lives/` ne s'importent jamais l'un l'autre, et `src/shared/`
-n'importe ni l'un ni l'autre : `src/test/space-separation.test.ts` le vérifie à chaque test.
-
-### Pages
-
-- Vidéos : `/` (fil), `/publier`, `/video/{id}`, `/profil` (gestion des vidéos), `/decouvrir`, `/createur/{id}`
-- Lives : `/lives` (découverte), `/live/{id}` (salle)
-
-## Emporter uniquement l'espace vidéos
-
-Copier dans un nouveau projet :
-
-- `src/videos/`, `src/shared/`, `src/routes/`, `src/components/ui/`, `src/integrations/`, `src/assets/`, `src/test/`
-- `src/styles.css`, `src/router.tsx`, `src/server.ts`, `src/start.ts`, `src/routeTree.gen.ts`
-- les fichiers de configuration à la racine : `package.json`, `bun.lock`, `tsconfig.json`, `vite.config.ts`, `vitest.config.ts`, `components.json`, `eslint.config.js`, `drizzle/`, `.env` (à compléter chez vous)
-
-Puis supprimer `src/lives/` ainsi que les deux pages de live `src/routes/lives.tsx` et
-`src/routes/live.$id.tsx`. La liste des pages se régénère toute seule au premier lancement.
-
-L'inverse fonctionne pareil pour l'espace lives : garder `src/lives/` et les deux pages de live,
-supprimer `src/videos/` et les pages vidéos.
+Pages : `/` (fil), `/publier`, `/video/{id}`, `/profil`, `/decouvrir`, `/createur/{id}`
 
 ## Télécharger le dépôt
 
