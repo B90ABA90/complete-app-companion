@@ -159,8 +159,8 @@ input, textarea, select { min-width:0; }
 .audio-bar { height: 30%; animation: audio-bar 0.9s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .audio-bar { animation:none; } }
 
-/* Scoped immersive live palette; the rest of VINASOUND keeps its light theme. */
-.live-theme {
+/* Scoped immersive dark palette (full-screen recorder); the rest of VINASOUND keeps its theme. */
+.live-theme, .recorder-theme {
   --background: oklch(0.08 0 0); --foreground: oklch(0.97 0 0);
   --card: oklch(0.16 0.006 270); --card-foreground: var(--foreground);
   --popover: var(--card); --popover-foreground: var(--foreground);
