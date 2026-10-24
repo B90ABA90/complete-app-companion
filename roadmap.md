@@ -1,0 +1,42 @@
+# Clip improvements
+- [x] Separate the repository into `src/videos`, `src/lives` and `src/shared` so the owner can download the git and take one space at a time; routes untouched, import map rewritten, separation rule test added, 38 tests pass and Videos ↔ Lives verified in the browser.
+- [x] Keep the video feed independent and make its Lives navigation accessible on desktop as well as mobile, without removing any live screens; separate route tests and browser Videos → Lives → Videos verified.
+- [x] Deliver standalone PHP/MySQL HTML/CSS/JavaScript video ZIP with installation guide, SQL schema and tests; verified real MariaDB/WebM publication, playback, comments, likes, private access/CSRF/owner deletion and desktop/mobile. Lovable app unchanged. External hosting/account bridge and original screenshot error remain unverified without site configuration/code.
+- [x] Deliver source ZIP with main-site integration instructions; real MP4 publication succeeded in current app. Archive excludes secrets, dependencies and generated output.
+- [ ] Diagnose publication failure on the original site shown in screenshot: awaiting that site's publication code/server error and the exact failing file; screenshot differs from current app. Current test video follows normal 24-hour expiry.
+- [x] Close comments after successful send and hide progress immediately after confirmed publication; pending/errors remain visible. Real comment send → automatic close → reopen/read-back → test comment deletion verified without browser errors. Progress completion/pending/error tests pass and browser state transition verified; no new full video upload was performed.
+- [x] Display available account artist names instead of generated guest IDs; center the bottom artist photo in a fixed record frame and rotate only during playback. Name tests pass; mobile/desktop framing and playback/pause verified with a browser-local video because existing uploads were not playable in the test browser. Actual main-site name/photo retrieval remains blocked by the identity exchange below.
+- [x] Remove separate video profile display/editor, retain /profil only for video management, and provide public main-site profile/follow/account configuration with explicit identity mapping and safe destination tests.
+- [ ] Activate main VINASOUND artist mappings and subscriptions: owner will complete the supplied public configuration; automatic account identity/synchronization still needs a trusted main-site exchange.
+- [x] Match reference filled video action silhouettes, equal circular sizing and right-side order including bottom creator photo; mobile/desktop captures, comments and share verified without browser errors. Favorite selection is presentation-only for this UI request, not persistent storage.
+- [x] Fix reported publication failure caused by missing remix profiles; authenticated MP4 publication → feed → profile → deletion verified with no browser errors.
+- [x] Enforce immutable 24-hour expiry, restrictive reads, bounded signed URLs and mounted-player expiry; permanent file-first cleanup and retry tests pass, every-minute managed schedule registered, real callback rejects anonymous callers and preserves unexpired uploads. A full 24-hour live wait was not performed.
+- [x] Remove external playback-error fallback, offer in-app retry and restrict iframe popups/top navigation; provider-internal interactions remain distinct from VINASOUND actions.
+- [x] Unify white video actions across providers and enforce app-origin video sharing with a rule test; provider-controlled iframe links cannot be removed.
+- [x] Apply a white VINASOUND video footer and remove its TikTok shortcut; official iframe branding remains provider-controlled.
+- [x] Remove opaque video masks and put TikTok social actions below the picture; official playback settings and comment opening verified on mobile/desktop.
+- [x] Reconstruct compact desktop live discovery and mobile live room from uploaded visual references; verified 320/393/768/1440 widths, creation, own chat, guest acceptance and gift window. Live event delivery between accounts requires refresh in this preview; production readiness remains blocked by existing identity/Stream items below.
+- [x] Add host-approved guest requests, shared live tiles, leaving/removal controls (built; slot/policy rule tests pass; two-device video still to try on real devices).
+- [ ] Reuse existing VINASOUND signed-in identity automatically: blocked on a trusted identity exchange supplied by the PHP site.
+- [x] Remove separate login, recovery, logout and login prompts while preserving ownership and private-data protections; legacy /auth opens feed, signed-out personal screens verified without login links, redirect test passes.
+- [x] Match the existing VINASOUND light/orange visual identity and add a VINASOUND video introduction while retaining the official TikTok player; introduction, skip, comments and discovery verified on desktop/mobile, 17 tests pass. TikTok's internal branding and cookie banner remain provider-controlled.
+- [x] Remove separate registration and rename visible branding and page metadata to VINASOUND; login/recovery navigation and branding verified in the browser, existing tests pass; retain protected account access until integration with the existing site.
+- [x] Add and verify official TikTok profile presentation from pasted profile/video links in Abonnements, without importing media; desktop/mobile rendering, unsafe-link rejection and closure verified.
+- [x] Add external TikTok video links without media storage using the accepted official player in Clip.
+- [x] Give TikTok feed cards the same social actions as native videos: like, comment, share, report, creator link.
+- [x] Add profile photo choosing and editing: picker in the profile editor, private storage, avatar shown on profile, feed, comments, discovery and messages; upload and display verified end-to-end.
+- [x] Verify authenticated link publication, profile/feed rendering, invalid-host rejection and owner deletion; remove test link.
+- [ ] Verify TikTok playback after provider cookie consent: official player displayed the selected video but did not confirm playback in the automated browser.
+- [x] Preserve feed and visual style; connect likes, comments and follows.
+- [x] Add account sign-in, registration, recovery and profile editing.
+- [x] Add real video publishing and owner deletion; verified end to end with a native MP4 upload (publish → Mes vidéos → detail page): native browser player, no TikTok iframe, actions below the picture. Test record removed.
+- [x] Add discovery, creator profiles, private messaging and notifications.
+- [x] Verify connected core flows, sample playback and access boundaries; remove test records.
+- [ ] Existing records/users/files: awaiting exports if an existing installation has data.
+- [x] Live interactions: live page with Cloudflare Stream player, chat with spam limits and moderation, batched likes, test-credit gifts with double-send protection, viewer count, artist controls, gift notifications.
+- [ ] Cloudflare Stream: live input creation built; blocked until the Cloudflare key allows Stream Edit without an IP restriction.
+- [ ] Paid gift credits: waiting on a validated payment/wallet decision; gifts use test credits only.
+- [x] Testable lives in preview: demo artist/viewer accounts, browser camera/mic broadcast (peer-to-peer), chat verified between two accounts.
+- [ ] Verify browser video reception on real devices: the automated test machine cannot open direct video connections; add a relay (TURN) service if viewers on mobile networks can't connect.
+- [x] VINASOUND sidebar, Lives page (tabs, cards, empty state), 3-step create wizard, audio-only live display.
+- [x] AI summary of selected live chat messages for artists (questions + urgent topics).

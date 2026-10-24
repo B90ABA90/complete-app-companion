@@ -1,0 +1,82 @@
+{
+  "source": "Clip_Starter_Pro.zip",
+  "capabilities": [
+    {
+      "capability": "code",
+      "source": "PHP/MySQL starter",
+      "outcome": "Connected routes and core interactions verified in browser",
+      "status": "verified",
+      "next_action": null
+    },
+    {
+      "capability": "schema",
+      "source": "database/schema.sql",
+      "outcome": "Cloud schema applied and new writes read back",
+      "status": "verified",
+      "next_action": null
+    },
+    {
+      "capability": "records",
+      "source": "No export supplied; starter examples only",
+      "outcome": "migrate",
+      "status": "pending",
+      "next_action": "Ask for MySQL CSV/JSON exports if an existing installation has data"
+    },
+    {
+      "capability": "auth identities",
+      "source": "users schema; no user export",
+      "outcome": "migrate",
+      "status": "pending",
+      "next_action": "Request original IDs/emails if existing users exist; old passwords and sessions do not transfer"
+    },
+    {
+      "capability": "authorization",
+      "source": "Owner videos, private messages",
+      "outcome": "Owner-only private videos, participant-only messages and blocked sends checked",
+      "status": "verified",
+      "next_action": null
+    },
+    {
+      "capability": "uploaded file bytes",
+      "source": "No original videos bundled",
+      "outcome": "New upload, playback and deletion verified; original files not supplied",
+      "status": "pending",
+      "next_action": "Attach existing video files if an existing installation has them"
+    },
+    {
+      "capability": "external providers",
+      "source": "No external integrations detected",
+      "outcome": "none detected",
+      "status": "verified",
+      "next_action": null
+    },
+    {
+      "capability": "public endpoints",
+      "source": "PHP app-internal API only",
+      "outcome": "First-party Cloud reads and writes exercised",
+      "status": "verified",
+      "next_action": null
+    },
+    {
+      "capability": "callbacks/webhooks/schedules/secrets",
+      "source": "No provider calls or schedules detected",
+      "outcome": "none detected",
+      "status": "verified",
+      "next_action": null
+    },
+    {
+      "capability": "cutover",
+      "source": "Unpublished Clip preview",
+      "outcome": "Preview working; not published",
+      "status": "pending",
+      "next_action": "Publish only when requested"
+    },
+    {
+      "capability": "verification",
+      "source": "Archive smoke checklist",
+      "outcome": "Profile edit, upload/playback/deletion, likes, comments, follows, notification storage and private messaging verified; email recovery and social sign-in not exercised",
+      "status": "pending",
+      "next_action": "Verify email confirmation/recovery and Google/Lovable sign-in with user interaction"
+    }
+  ]
+}
