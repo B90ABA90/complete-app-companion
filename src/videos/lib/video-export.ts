@@ -127,7 +127,7 @@ export async function exportWithSignature(
     await stopped;
     stream.getTracks().forEach(t => t.stop());
     onProgress(1);
-    return { blob: new Blob(chunks, { type: mime.split(';')[0] }), mime };
+    return { blob: new Blob(chunks, { type: mime.split(';')[0] ?? 'video/mp4' }), mime };
   } finally {
     if (timer) clearInterval(timer);
     v.pause(); URL.revokeObjectURL(objectUrl); void ac.close().catch(() => {});
