@@ -29,7 +29,6 @@ function useVideoSocial(v: ClipVideo) {
   const [report, setReport] = useState(false);
   const [reason, setReason] = useState('');
   const [busy, setBusy] = useState(false);
-  const [favorite, setFavorite] = useState(false);
   const { user } = useClipSession();
   const qc = useQueryClient();
   const { data: liked = false } = useQuery({ queryKey: ['liked', user?.id, v.id], enabled: !!user, queryFn: async () => { const r = await supabase.from('likes').select('video_id').eq('video_id', v.id).eq('user_id', user?.id ?? '').maybeSingle(); if (r.error) throw r.error; return !!r.data; } });
@@ -55,7 +54,7 @@ function useVideoSocial(v: ClipVideo) {
       .catch(err => toast.error(err instanceof Error ? err.message : 'Téléchargement impossible.'))
       .finally(() => setExporting(null));
   };
-  return { user, liked, busy, like, share, shareOpen, setShareOpen, nativeShare, exporting, download, comments, setComments, report, setReport, reason, setReason, favorite, setFavorite };
+  return { user, liked, busy, like, share, shareOpen, setShareOpen, nativeShare, exporting, download, comments, setComments, report, setReport, reason, setReason };
 }
 function VideoActions({ v, social, playing, extra }: { v: ClipVideo; social: ReturnType<typeof useVideoSocial>; playing: boolean; extra?: ReactNode }) {
   const name = creatorName(v);
