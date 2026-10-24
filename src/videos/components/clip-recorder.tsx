@@ -44,9 +44,9 @@ export function CameraRecorder({ onDone, onCancel }: { onDone: (file: File) => v
   const [hint, setHint] = useState('');
   const [review, setReview] = useState<{ file: File; url: string } | null>(null);
 
-  const settingsRef = useRef({ zoom, filter: FILTERS[0].css as string, mirror });
-  settingsRef.current = { zoom, filter: FILTERS[filterIdx].css, mirror };
-  const limit = recordLimitSeconds(DURATIONS[durationIdx].seconds, sound?.duration);
+  const settingsRef = useRef({ zoom, filter: 'none' as string, mirror });
+  settingsRef.current = { zoom, filter: FILTERS[filterIdx]?.css ?? 'none', mirror };
+  const limit = recordLimitSeconds(DURATIONS[durationIdx]?.seconds ?? 60, sound?.duration);
   const limitRef = useRef(limit); limitRef.current = limit;
   const micRef = useRef(micOn); micRef.current = micOn;
 
@@ -241,7 +241,7 @@ export function CameraRecorder({ onDone, onCancel }: { onDone: (file: File) => v
         {/* Small settings */}
         <div className={`absolute right-3 top-[calc(env(safe-area-inset-top)+5rem)] flex flex-col gap-4 transition-opacity ${recording ? 'pointer-events-none opacity-0' : ''}`}>
           <button type="button" className={tool} onClick={() => setFacing(f => (f === 'user' ? 'environment' : 'user'))}><span className={toolIcon}><SwitchCamera className="size-5" /></span>Retourner</button>
-          <button type="button" className={tool} onClick={() => setFilterIdx(i => (i + 1) % FILTERS.length)}><span className={toolIcon}><Sparkles className="size-5" /></span>{FILTERS[filterIdx].label}</button>
+          <button type="button" className={tool} onClick={() => setFilterIdx(i => (i + 1) % FILTERS.length)}><span className={toolIcon}><Sparkles className="size-5" /></span>{FILTERS[filterIdx]?.label}</button>
           <button type="button" className={tool} aria-pressed={micOn} onClick={() => setMicOn(m => !m)}><span className={toolIcon}>{micOn ? <Mic className="size-5" /> : <MicOff className="size-5" />}</span>{micOn ? 'Micro' : 'Micro coupé'}</button>
           <button type="button" className={tool} aria-pressed={mirror} onClick={() => setMirror(m => !m)}><span className={toolIcon}><FlipHorizontal2 className="size-5" /></span>Miroir</button>
         </div>
