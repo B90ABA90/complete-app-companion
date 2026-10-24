@@ -41,6 +41,7 @@ function useVideoSocial(v: ClipVideo) {
     if (r.error) { toast.error('Impossible d’enregistrer ce j’aime.'); return; }
     qc.invalidateQueries({ queryKey: ['liked', user.id, v.id] }); qc.invalidateQueries({ queryKey: ['feed'] });
   };
+  const [favorite, setFavorite] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const share = () => setShareOpen(true);
   const nativeShare = async () => { try { await navigator.share({ title: `VINASOUND — @${creatorName(v)}`, url: videoShareUrl(window.location.origin, v.id) }); } catch { /* cancelled */ } };
@@ -54,20 +55,20 @@ function useVideoSocial(v: ClipVideo) {
       .catch(err => toast.error(err instanceof Error ? err.message : 'Téléchargement impossible.'))
       .finally(() => setExporting(null));
   };
-  return { user, liked, busy, like, share, shareOpen, setShareOpen, nativeShare, exporting, download, comments, setComments, report, setReport, reason, setReason };
+  return { user, liked, busy, like, share, shareOpen, setShareOpen, nativeShare, exporting, download, comments, setComments, report, setReport, reason, setReason, favorite, setFavorite };
 }
 function VideoActions({ v, social, playing, extra }: { v: ClipVideo; social: ReturnType<typeof useVideoSocial>; playing: boolean; extra?: ReactNode }) {
   const name = creatorName(v);
   return <>
-    <aside aria-label="Actions de la vidéo" className="video-actions absolute bottom-6 right-3 z-10 flex w-12 flex-col items-center gap-2 text-video-action-foreground">
+    <aside aria-label="Actions de la vidéo" className="video-actions absolute bottom-14 right-3 z-10 flex w-12 flex-col items-center gap-3 text-video-action-foreground">
       <div className="relative mb-3 size-12">
         {v.user_id ? <ArtistProfileLink id={v.user_id} username={v.profiles?.username} label={`Profil de ${name}`} className="flex size-12 items-center justify-center overflow-hidden rounded-full bg-video-action-background p-0 text-lg"><Avatar path={v.profiles?.avatar_path} name={name} className="flex size-full items-center justify-center" /></ArtistProfileLink> : <span className="flex size-12 items-center justify-center rounded-full bg-video-action-background font-bold">{name.charAt(0).toUpperCase()}</span>}
         <ArtistProfileLink id={v.user_id} username={v.profiles?.username} action="follow" label={`S’abonner à ${name} sur VINASOUND`} className="absolute -bottom-3 left-3 flex size-6 items-center justify-center rounded-full bg-video-follow p-0 text-video-action-foreground"><Plus className="size-5" strokeWidth={3}/></ArtistProfileLink>
       </div>
       <div className="flex flex-col items-center gap-1"><Button variant="ghost" size="icon" aria-label={social.liked ? 'Retirer le j’aime' : 'Aimer'} aria-pressed={social.liked} disabled={social.busy} onClick={() => social.like()} className="size-12 rounded-full bg-video-action-background p-0 text-video-action-foreground hover:bg-video-action-background [&_svg]:size-6"><VideoActionIcon kind="heart" className={social.liked ? 'animate-pop text-video-follow' : ''}/></Button><span className="text-xs font-bold text-video-action-count">{formatCount(v.likes[0]?.count ?? 0)}</span></div>
       <div className="flex flex-col items-center gap-1"><Button variant="ghost" size="icon" aria-label="Commentaires" onClick={() => social.setComments(true)} className="size-12 rounded-full bg-video-action-background p-0 text-video-action-foreground hover:bg-video-action-background [&_svg]:size-6"><VideoActionIcon kind="comment"/></Button><span className="text-xs font-bold text-video-action-count">{formatCount(v.comments[0]?.count ?? 0)}</span></div>
+      <div className="flex flex-col items-center gap-1"><Button variant="ghost" size="icon" aria-label={social.favorite ? 'Retirer des favoris' : 'Ajouter aux favoris'} aria-pressed={social.favorite} onClick={() => social.setFavorite(!social.favorite)} className="size-12 rounded-full bg-video-action-background p-0 text-video-action-foreground hover:bg-video-action-background [&_svg]:size-6"><VideoActionIcon kind="bookmark" className={social.favorite ? 'text-primary' : ''}/></Button><span className="text-xs font-bold text-video-action-count">{social.favorite ? 1 : 0}</span></div>
       <div className="flex flex-col items-center gap-1"><Button variant="ghost" size="icon" aria-label="Partager" onClick={social.share} className="size-12 rounded-full bg-video-action-background p-0 text-video-action-foreground hover:bg-video-action-background [&_svg]:size-6"><VideoActionIcon kind="share"/></Button><span className="text-xs font-bold text-video-action-count">Partager</span></div>
-      <div className="flex flex-col items-center gap-1"><Button variant="ghost" size="icon" aria-label="Télécharger en MP4" disabled={social.exporting !== null} onClick={social.download} className="size-12 rounded-full bg-video-action-background p-0 text-video-action-foreground hover:bg-video-action-background [&_svg]:size-6">{social.exporting !== null ? <Loader2 className="animate-spin" /> : <Download />}</Button><span className="text-xs font-bold text-video-action-count">{social.exporting !== null ? `${social.exporting} %` : 'MP4'}</span></div>
       {v.user_id && <ArtistProfileLink id={v.user_id} username={v.profiles?.username} label={`Profil artiste : ${name}`} className="video-record mt-1 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-video-action-background p-1.5 text-sm hover:bg-video-action-background"><span data-playing={playing} className="video-record-photo flex size-full items-center justify-center overflow-hidden rounded-full"><Avatar path={v.profiles?.avatar_path} name={name} className="flex size-full items-center justify-center"/></span></ArtistProfileLink>}
       {extra}
     </aside>
