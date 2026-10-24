@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { Upload, Check, Camera } from 'lucide-react';
+import { Upload, Check, Video } from 'lucide-react';
 import { ClipShell, AccountUnavailable } from '@/shared/components/clip-shell';
 import { useClipSession } from '@/shared/components/clip-session';
 import { Button } from '@/components/ui/button';
@@ -33,8 +33,23 @@ function Page() {
     })();
   }}>
     <p className="text-sm text-muted-foreground">Disponible 24 heures, puis supprimée définitivement, fichier compris.</p>
-    <label className="flex min-h-44 cursor-pointer flex-col items-center justify-center gap-3 rounded-md border border-dashed border-secondary bg-card p-4"><Upload className="size-8 text-secondary" /><span className="font-semibold">Choisir une vidéo</span><span className="text-xs text-muted-foreground">MP4 ou WebM · 50 Mo maximum</span><input type="file" accept="video/mp4,video/webm" className="sr-only" onChange={e => { const f = e.target.files?.[0]; if (f && f.size > 50 * 1024 * 1024) { setError('La vidéo dépasse 50 Mo.'); return; } setFile(f ?? null); setError(''); }} /></label>
-    {camera ? <CameraRecorder onDone={f => { setFile(f); setError(''); setCamera(false); }} onCancel={() => setCamera(false)} /> : <Button type="button" variant="outline" className="w-full" onClick={() => setCamera(true)}><Camera />Enregistrer avec la caméra</Button>}
+    <div className="grid grid-cols-2 gap-3">
+      <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border bg-card p-4 text-center transition-colors hover:bg-muted focus-within:ring-2 focus-within:ring-ring">
+        <span className="flex size-14 items-center justify-center rounded-full bg-secondary text-secondary-foreground"><Upload className="size-7" /></span>
+        <span className="text-sm font-semibold">Téléverser</span>
+        <span className="text-[11px] leading-tight text-muted-foreground">MP4 ou WebM · 50 Mo</span>
+        <input type="file" accept="video/mp4,video/webm" className="sr-only" onChange={e => { const f = e.target.files?.[0]; if (f && f.size > 50 * 1024 * 1024) { setError('La vidéo dépasse 50 Mo.'); return; } setFile(f ?? null); setError(''); }} />
+      </label>
+      <button type="button" onClick={() => setCamera(true)} className="flex flex-col items-center justify-center gap-2 rounded-xl border bg-card p-4 text-center transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <span className="relative flex size-14 items-center justify-center rounded-full border-4 border-destructive/40 bg-background">
+          <Video className="size-7 text-foreground" />
+          <span className="absolute -right-0.5 -top-0.5 size-4 animate-pulse rounded-full border-2 border-card bg-destructive" />
+        </span>
+        <span className="text-sm font-semibold">Enregistrer</span>
+        <span className="text-[11px] leading-tight text-muted-foreground">Avec la caméra</span>
+      </button>
+    </div>
+    {camera && <CameraRecorder onDone={f => { setFile(f); setError(''); setCamera(false); }} onCancel={() => setCamera(false)} />}
     {preview && <video src={preview} controls playsInline className="mx-auto max-h-72 w-full rounded-md bg-muted object-contain" />}
     <label className="block text-sm">Légende<textarea value={caption} maxLength={500} onChange={e => setCaption(e.target.value)} placeholder="Une légende, des #hashtags…" className="mt-2 min-h-24 w-full rounded-md border bg-muted p-3" /></label><label className="block text-sm">Visibilité<select value={visibility} onChange={e => setVisibility(e.target.value)} className="mt-2 w-full rounded-md border bg-muted p-3"><option value="public">Tout le monde</option><option value="private">Moi uniquement</option></select></label>{error && <p role="alert" className="text-sm text-primary">{error}</p>}<Button type="submit" className="w-full" disabled={busy || !file}>{busy ? 'Publication en cours…' : 'Publier la vidéo'}</Button></form>}</ClipShell>;
 }
