@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Play, Flag, Send, Trash2, AudioLines, Plus, Loader2 } from 'lucide-react';
+import { Play, Flag, Send, Trash2, AudioLines, Plus, Loader2, Download } from 'lucide-react';
+import { exportFileName, exportWithSignature, prepareExport, saveBlob } from '@/videos/lib/video-export';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar } from '@/shared/components/clip-avatar';
@@ -44,7 +45,17 @@ function useVideoSocial(v: ClipVideo) {
   const [shareOpen, setShareOpen] = useState(false);
   const share = () => setShareOpen(true);
   const nativeShare = async () => { try { await navigator.share({ title: `VINASOUND — @${creatorName(v)}`, url: videoShareUrl(window.location.origin, v.id) }); } catch { /* cancelled */ } };
-  return { user, liked, busy, like, share, shareOpen, setShareOpen, nativeShare, comments, setComments, report, setReport, reason, setReason, favorite, setFavorite };
+  const [exporting, setExporting] = useState<number | null>(null);
+  const download = () => {
+    if (exporting !== null || !v.video_url) return;
+    const prep = prepareExport();
+    setExporting(0);
+    exportWithSignature(prep, v.video_url, creatorName(v), p => setExporting(Math.round(p * 100)))
+      .then(({ blob, mime }) => { saveBlob(blob, exportFileName(v.id, mime)); toast.success(mime.startsWith('video/mp4') ? 'Vidéo MP4 téléchargée avec la signature VINASOUND' : 'Vidéo téléchargée avec la signature VINASOUND (WebM : ce navigateur ne sait pas créer de MP4)'); })
+      .catch(err => toast.error(err instanceof Error ? err.message : 'Téléchargement impossible.'))
+      .finally(() => setExporting(null));
+  };
+  return { user, liked, busy, like, share, shareOpen, setShareOpen, nativeShare, exporting, download, comments, setComments, report, setReport, reason, setReason, favorite, setFavorite };
 }
 function VideoActions({ v, social, playing, extra }: { v: ClipVideo; social: ReturnType<typeof useVideoSocial>; playing: boolean; extra?: ReactNode }) {
   const name = creatorName(v);
@@ -61,7 +72,7 @@ function VideoActions({ v, social, playing, extra }: { v: ClipVideo; social: Ret
       {v.user_id && <ArtistProfileLink id={v.user_id} username={v.profiles?.username} label={`Profil artiste : ${name}`} className="video-record mt-1 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-video-action-background p-1.5 text-sm hover:bg-video-action-background"><span data-playing={playing} className="video-record-photo flex size-full items-center justify-center overflow-hidden rounded-full"><Avatar path={v.profiles?.avatar_path} name={name} className="flex size-full items-center justify-center"/></span></ArtistProfileLink>}
       {extra}
     </aside>
-    <Dialog open={social.shareOpen} onOpenChange={social.setShareOpen}><DialogContent aria-describedby={undefined} className="max-w-sm"><DialogTitle>Partager la vidéo</DialogTitle><ShareTargets title={v.caption || 'VINASOUND'} text={`Regarde cette vidéo de @${name} sur VINASOUND`} url={typeof window === 'undefined' ? '' : videoShareUrl(window.location.origin, v.id)} onNative={social.nativeShare} /><Button variant="ghost" onClick={() => { social.setShareOpen(false); if (social.user) social.setReport(true); else toast('Ton compte VINASOUND n’est pas encore relié à cet aperçu.'); }}><Flag/>Signaler la vidéo</Button></DialogContent></Dialog>
+    <Dialog open={social.shareOpen} onOpenChange={social.setShareOpen}><DialogContent aria-describedby={undefined} className="max-w-sm"><DialogTitle>Partager la vidéo</DialogTitle><ShareTargets title={v.caption || 'VINASOUND'} text={`Regarde cette vidéo de @${name} sur VINASOUND`} url={typeof window === 'undefined' ? '' : videoShareUrl(window.location.origin, v.id)} onNative={social.nativeShare} /><Button variant="outline" disabled={social.exporting !== null} onClick={social.download}>{social.exporting !== null ? <><Loader2 className="animate-spin" />Préparation… {social.exporting} %</> : <><Download />Télécharger en MP4</>}</Button>{social.exporting !== null && <p className="text-xs text-muted-foreground">La signature VINASOUND est ajoutée à la fin. Garde cette page ouverte pendant la préparation.</p>}<Button variant="ghost" onClick={() => { social.setShareOpen(false); if (social.user) social.setReport(true); else toast('Ton compte VINASOUND n’est pas encore relié à cet aperçu.'); }}><Flag/>Signaler la vidéo</Button></DialogContent></Dialog>
     <CommentSheet v={v} open={social.comments} onClose={() => social.setComments(false)} />
     <Dialog open={social.report} onOpenChange={social.setReport}><DialogContent aria-describedby={undefined} className="max-w-sm"><DialogTitle>Signaler cette vidéo</DialogTitle><form className="space-y-4" onSubmit={async e => { e.preventDefault(); if (!social.user || !social.reason.trim()) return; const r = await supabase.from('reports').insert({ user_id: social.user.id, video_id: v.id, reason: social.reason.trim() }); if (r.error) toast.error('Signalement non envoyé.'); else { toast.success('Signalement enregistré'); social.setReport(false); social.setReason(''); } }}><textarea required maxLength={500} value={social.reason} onChange={e => social.setReason(e.target.value)} aria-label="Motif du signalement" placeholder="Motif du signalement" className="w-full rounded-md bg-muted p-3" /><Button type="submit">Envoyer le signalement</Button></form></DialogContent></Dialog>
   </>;
