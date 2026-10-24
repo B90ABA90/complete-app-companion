@@ -330,3 +330,13 @@ input, textarea, select { min-width:0; }
 /* Navigation */
 .clip-nav { background: color-mix(in oklab, var(--card) 92%, transparent); backdrop-filter: blur(16px); }
 .live-discovery nav.clip-nav { background: color-mix(in oklab, var(--card) 94%, transparent) !important; }
+
+/* End-of-video VINASOUND card (TikTok-style outro). */
+.vs-outro { animation: vs-outro-fade 2.3s ease both; }
+.vs-outro-logo { animation: vs-outro-pop 0.6s cubic-bezier(.2,1.6,.4,1) both, vs-outro-pulse 0.9s 0.6s ease-in-out infinite alternate; }
+.vs-outro-word { animation: vs-outro-rise 0.5s 0.25s ease-out both; }
+@keyframes vs-outro-fade { 0% { opacity: 0; } 10%, 88% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes vs-outro-pop { from { transform: scale(0.3) rotate(-15deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+@keyframes vs-outro-pulse { to { transform: scale(1.08); } }
+@keyframes vs-outro-rise { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .vs-outro, .vs-outro-logo, .vs-outro-word { animation: none; } }

@@ -71,6 +71,7 @@ function NativeVideoCard({ v }: { v: ClipVideo }) {
   const [paused, setPaused] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [buffering, setBuffering] = useState(true);
+  const [outro, setOutro] = useState(false);
   const visible = useRef(false);
   const retries = useRef(0);
   const social = useVideoSocial(v);
@@ -123,13 +124,19 @@ function NativeVideoCard({ v }: { v: ClipVideo }) {
     const el = ref.current; if (!el) return;
     setPlaying(false);
     if (!el.muted) playEndSignature();
-    setTimeout(() => { if (visible.current) { el.currentTime = 0; el.play().then(() => setPaused(false)).catch(() => retry()); } }, 1500);
+    setOutro(true);
+    setTimeout(() => { setOutro(false); if (visible.current) { el.currentTime = 0; el.play().then(() => setPaused(false)).catch(() => retry()); } }, 2300);
   };
   return <section className="video-surface relative h-[calc(100dvh-4rem)] snap-start overflow-hidden bg-background">
     <video ref={ref} src={src} preload="auto" playsInline controls className="h-full w-full object-contain" onPlay={() => setPaused(false)} onPlaying={() => { setPlaying(true); setBuffering(false); }} onCanPlay={() => setBuffering(false)} onWaiting={() => { setPlaying(false); setBuffering(true); }} onStalled={() => { setPlaying(false); setBuffering(true); const el = ref.current; setTimeout(() => { if (el && visible.current && !el.ended && el.readyState < 3) el.play().catch(() => {}); }, 2500); }} onSeeking={() => setPlaying(false)} onPause={() => { setPaused(true); setPlaying(false); }} onError={() => { setPlaying(false); const el = ref.current; if (el?.error && (el.error.code === 2 || el.error.code === 3)) retry(); else setPaused(true); }} onEnded={ended} onDoubleClick={() => social.like(true)} aria-label={`Vidéo de ${name}`} />
     {buffering && !paused && <Loader2 aria-label="Chargement de la vidéo" className="pointer-events-none absolute left-1/2 top-1/2 size-12 -translate-x-1/2 -translate-y-1/2 animate-spin text-foreground" />}
     {paused && <Button variant="ghost" size="icon" aria-label="Lire la vidéo" className="absolute left-1/2 top-1/2 size-16 -translate-x-1/2 -translate-y-1/2" onClick={toggle}><Play className="size-12 fill-foreground" /></Button>}
     <VinasoundVideoIntro />
+    {outro && <div aria-label="Fin de la vidéo — VINASOUND" className="vs-outro absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-brand-ink/90 text-foreground">
+      <span className="vs-outro-logo flex size-20 items-center justify-center rounded-3xl bg-primary text-primary-foreground shadow-2xl"><AudioLines className="size-12" /></span>
+      <span className="vs-outro-word text-4xl font-extrabold tracking-tight">VINA<span className="text-primary">SOUND</span></span>
+      <span className="vs-outro-word text-sm font-semibold opacity-80">@{name}</span>
+    </div>}
     <span aria-label="VINASOUND" className="absolute right-3 top-3 z-10 flex size-10 items-center justify-center rounded-md bg-brand-ink/80 text-primary shadow-lg"><AudioLines className="size-6" /></span>
     <div className="video-caption absolute bottom-20 left-3 right-20 z-10 text-foreground"><p className="break-words text-sm font-semibold">{name}</p><p className="line-clamp-2 break-words text-sm" title={v.caption}>{v.caption}</p>{v.is_example && <p className="text-xs">Vidéo d’exemple</p>}</div>
     <VideoActions v={v} social={social} playing={playing} />
