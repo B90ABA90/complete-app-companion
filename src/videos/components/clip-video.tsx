@@ -51,7 +51,7 @@ function useVideoSocial(v: ClipVideo) {
     const prep = prepareExport();
     setExporting(0);
     exportWithSignature(prep, v.video_url, creatorName(v), p => setExporting(Math.round(p * 100)))
-      .then(({ blob, mime }) => { saveBlob(blob, exportFileName(v.id, mime)); toast.success(mime.startsWith('video/mp4') ? 'Vidéo MP4 téléchargée avec la signature VINASOUND' : 'Vidéo téléchargée avec la signature VINASOUND (WebM : ce navigateur ne sait pas créer de MP4)'); })
+      .then(({ blob, mime }) => { saveBlob(blob, exportFileName(v.id, mime)); toast.success('Vidéo MP4 téléchargée avec la signature VINASOUND'); })
       .catch(err => toast.error(err instanceof Error ? err.message : 'Téléchargement impossible.'))
       .finally(() => setExporting(null));
   };
@@ -139,7 +139,7 @@ function NativeVideoCard({ v }: { v: ClipVideo }) {
     setTimeout(() => { setOutro(false); if (visible.current) { el.currentTime = 0; el.play().then(() => setPaused(false)).catch(() => retry()); } }, 2300);
   };
   return <section className="video-surface relative h-[calc(100dvh-4rem)] snap-start overflow-hidden bg-background">
-    <video ref={ref} src={src} preload="auto" playsInline controls className="h-full w-full object-contain" onPlay={() => setPaused(false)} onPlaying={() => { setPlaying(true); setBuffering(false); }} onCanPlay={() => setBuffering(false)} onWaiting={() => { setPlaying(false); setBuffering(true); }} onStalled={() => { setPlaying(false); setBuffering(true); const el = ref.current; setTimeout(() => { if (el && visible.current && !el.ended && el.readyState < 3) el.play().catch(() => {}); }, 2500); }} onSeeking={() => setPlaying(false)} onPause={() => { setPaused(true); setPlaying(false); }} onError={() => { setPlaying(false); const el = ref.current; if (el?.error && (el.error.code === 2 || el.error.code === 3)) retry(); else setPaused(true); }} onEnded={ended} onDoubleClick={() => social.like(true)} aria-label={`Vidéo de ${name}`} />
+    <video ref={ref} src={src} preload="auto" playsInline controls controlsList="nodownload" disablePictureInPicture onContextMenu={e => e.preventDefault()} className="h-full w-full object-contain" onPlay={() => setPaused(false)} onPlaying={() => { setPlaying(true); setBuffering(false); }} onCanPlay={() => setBuffering(false)} onWaiting={() => { setPlaying(false); setBuffering(true); }} onStalled={() => { setPlaying(false); setBuffering(true); const el = ref.current; setTimeout(() => { if (el && visible.current && !el.ended && el.readyState < 3) el.play().catch(() => {}); }, 2500); }} onSeeking={() => setPlaying(false)} onPause={() => { setPaused(true); setPlaying(false); }} onError={() => { setPlaying(false); const el = ref.current; if (el?.error && (el.error.code === 2 || el.error.code === 3)) retry(); else setPaused(true); }} onEnded={ended} onDoubleClick={() => social.like(true)} aria-label={`Vidéo de ${name}`} />
     {buffering && !paused && <Loader2 aria-label="Chargement de la vidéo" className="pointer-events-none absolute left-1/2 top-1/2 size-12 -translate-x-1/2 -translate-y-1/2 animate-spin text-foreground" />}
     {paused && <Button variant="ghost" size="icon" aria-label="Lire la vidéo" className="absolute left-1/2 top-1/2 size-16 -translate-x-1/2 -translate-y-1/2" onClick={toggle}><Play className="size-12 fill-foreground" /></Button>}
     <VinasoundVideoIntro />

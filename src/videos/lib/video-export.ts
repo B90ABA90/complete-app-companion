@@ -21,6 +21,32 @@ export function exportFileName(id: string, mime: string): string {
   return `vinasound-${id.slice(0, 8)}.${mime.startsWith('video/mp4') ? 'mp4' : 'webm'}`;
 }
 
+/** Recordings that are not already MP4 are converted in the browser before saving. */
+export function needsMp4Conversion(mime: string): boolean {
+  return !mime.startsWith('video/mp4');
+}
+
+/** Converts a recorded file (e.g. WebM) to an H.264 MP4 entirely in the browser. */
+export async function convertToMp4(input: Blob, onProgress: (ratio: number) => void): Promise<Blob> {
+  const mb = await import('mediabunny');
+  if (!(await mb.canEncodeVideo('avc'))) throw new Error('Ce navigateur ne sait pas créer de MP4. Essaie avec Chrome, Edge ou Safari à jour.');
+  const audioCodec = (await mb.canEncodeAudio('aac')) ? 'aac' : 'opus';
+  const output = new mb.Output({ format: new mb.Mp4OutputFormat({ fastStart: 'in-memory' }), target: new mb.BufferTarget() });
+  const conversion = await mb.Conversion.init({
+    input: new mb.Input({ source: new mb.BlobSource(input), formats: mb.ALL_FORMATS }),
+    output,
+    video: { codec: 'avc', forceTranscode: true },
+    audio: { codec: audioCodec },
+    showWarnings: false,
+  });
+  if (!conversion.isValid) throw new Error('Conversion en MP4 impossible sur ce navigateur.');
+  conversion.onProgress = p => onProgress(p);
+  await conversion.execute();
+  const buf = output.target.buffer;
+  if (!buf || buf.byteLength === 0) throw new Error('Conversion en MP4 impossible.');
+  return new Blob([buf], { type: 'video/mp4' });
+}
+
 function colors() {
   const s = getComputedStyle(document.documentElement);
   const g = (n: string, f: string) => s.getPropertyValue(n).trim() || f;
@@ -86,6 +112,9 @@ export async function exportWithSignature(
   const { video: v, ac } = prep;
   const mime = pickExportMime(m => typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(m));
   if (!mime) throw new Error('Ton navigateur ne peut pas préparer le téléchargement.');
+  const convert = needsMp4Conversion(mime);
+  const share = convert ? 0.7 : 1;
+  const report = (r: number) => onProgress(r * share);
   const res = await fetch(src);
   if (!res.ok) throw new Error('La vidéo n’est plus disponible.');
   const objectUrl = URL.createObjectURL(await res.blob());
@@ -112,11 +141,11 @@ export async function exportWithSignature(
     const frame = () => {
       if (!outroAt) {
         ctx.drawImage(v, 0, 0, W, H); drawWatermark(ctx, W, H, c);
-        if (duration) onProgress(Math.min(0.99, v.currentTime / (duration + OUTRO_SECONDS)));
+        if (duration) report(Math.min(0.99, v.currentTime / (duration + OUTRO_SECONDS)));
       } else {
         const t = (performance.now() - outroAt) / 1000;
         drawOutro(ctx, W, H, t, artist, c);
-        if (duration) onProgress(Math.min(0.99, (duration + t) / (duration + OUTRO_SECONDS)));
+        if (duration) report(Math.min(0.99, (duration + t) / (duration + OUTRO_SECONDS)));
         if (t >= OUTRO_SECONDS && rec.state === 'recording') rec.stop();
       }
     };
@@ -126,8 +155,11 @@ export async function exportWithSignature(
     await v.play().catch(() => { throw new Error('Touche encore « Télécharger » pour lancer la préparation.'); });
     await stopped;
     stream.getTracks().forEach(t => t.stop());
+    const recorded = new Blob(chunks, { type: mime.split(';')[0] ?? 'video/mp4' });
+    if (!convert) { onProgress(1); return { blob: recorded, mime }; }
+    const mp4 = await convertToMp4(recorded, p => onProgress(share + p * (1 - share)));
     onProgress(1);
-    return { blob: new Blob(chunks, { type: mime.split(';')[0] ?? 'video/mp4' }), mime };
+    return { blob: mp4, mime: 'video/mp4' };
   } finally {
     if (timer) clearInterval(timer);
     v.pause(); URL.revokeObjectURL(objectUrl); void ac.close().catch(() => {});
