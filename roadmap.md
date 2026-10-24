@@ -41,3 +41,4 @@
 - [x] VINASOUND sidebar, Lives page (tabs, cards, empty state), 3-step create wizard, audio-only live display.
 - [x] AI summary of selected live chat messages for artists (questions + urgent topics).
 - [x] Full-screen hold-to-record camera with added sound auto-played and mixed in, progress ring, review (publish or delete/restart) and small settings; fake-camera hold→release→review→form verified. Real-device sound mixing not tested.
+- [x] Download with burned-in VINASOUND watermark + end card + signature sound (MP4 preferred); verified a real 62 s download contains end card and sound. H.264 on real phones not tested in sandbox.
