@@ -68,7 +68,7 @@ function useVideoSocial(v: ClipVideo) {
     setDeleting(false); setConfirmDelete(false);
     toast.success('Vidéo supprimée');
     qc.invalidateQueries({ queryKey: ['feed'] }); qc.invalidateQueries({ queryKey: ['own-videos'] });
-    if (new URLSearchParams(window.location.search).get('v') === v.id) navigate({ to: '/', search: {}, replace: true });
+    if (window.location.pathname.startsWith('/video/')) navigate({ to: '/' });
   };
   return { user, liked, busy, like, share, shareOpen, setShareOpen, nativeShare, exporting, download, comments, setComments, report, setReport, reason, setReason, favorite, setFavorite, isOwner, confirmDelete, setConfirmDelete, deleting, remove };
 }
