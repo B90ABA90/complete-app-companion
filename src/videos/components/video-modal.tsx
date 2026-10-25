@@ -29,7 +29,7 @@ export function VideoTile({ v, onOpen }: { v: ClipVideo; onOpen: (id: string) =>
 /** Player modal for the video whose id is in the page address (?v=…). */
 export function VideoModal({ id, videos, onClose }: { id: string | undefined; videos: ClipVideo[]; onClose: () => void }) {
   const inList = id ? videos.find(v => v.id === id) : undefined;
-  const { data, isPending } = useQuery({ ...feedOptions({ video: id }), enabled: !!id && !inList });
+  const { data, isPending } = useQuery({ ...feedOptions(id ? { video: id } : {}), enabled: !!id && !inList });
   const video = inList ?? data?.videos[0];
   return <Dialog open={!!id} onOpenChange={o => { if (!o) onClose(); }}>
     <DialogContent aria-describedby={undefined} className="h-[min(92dvh,900px)] w-[min(100vw,30rem)] max-w-none gap-0 overflow-hidden border-0 bg-background p-0 sm:rounded-2xl [&>button]:z-30 [&>button]:rounded-full [&>button]:bg-brand-ink/80 [&>button]:p-2 [&>button]:text-foreground [&>button]:opacity-100">
