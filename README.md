@@ -13,7 +13,7 @@ L'espace lives a été supprimé : l'application ne contient plus que les vidéo
 | `src/shared/` | Socle commun : session, navigation, image VINASOUND, partage, utilitaires |
 | `src/routes/` | Les pages (`routeTree.gen.ts` est généré, ne pas le modifier) |
 
-Pages : `/` (page unique : grille Vidéos, lecteur en fenêtre modale via `?v={id}`), `/publier`, `/profil`, `/decouvrir`, `/createur/{id}`
+Pages : `/` (fil), `/publier`, `/video/{id}`, `/profil`, `/decouvrir`, `/createur/{id}`
 
 ## Télécharger le dépôt
 

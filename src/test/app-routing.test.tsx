@@ -14,10 +14,6 @@ describe("App routing", () => {
     expect(router.matchRoutes("/lives").at(-1)?.routeId).not.toBe("/lives");
     expect(router.matchRoutes("/live/example").at(-1)?.routeId).not.toBe("/live/$id");
   });
-  it("has no separate video page: videos open in a modal on the home page", () => {
-    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
-    expect(router.matchRoutes("/video/3f2b8c1e-1d2a-4b5c-9e8f-0a1b2c3d4e5f").at(-1)?.routeId).not.toBe("/video/$id");
-  });
   it("redirects the old login URL directly to the feed", () => {
     let result: unknown;
     try {
