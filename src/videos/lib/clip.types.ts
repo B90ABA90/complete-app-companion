@@ -13,3 +13,5 @@ export const creatorName = (v: Pick<ClipVideo, 'user_id' | 'profiles' | 'creator
   return publishedName && !/^user_[a-f0-9]+$/i.test(publishedName) ? publishedName : 'Artiste';
 };
 export const formatCount = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1).replace('.0', '')}k` : String(n);
+/** Only the account that published a video may delete it (also enforced by database rules). */
+export const canDeleteVideo = (userId: string | null | undefined, v: Pick<ClipVideo, 'user_id' | 'is_example'>) => !!userId && !v.is_example && v.user_id === userId;

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Play, Flag, Send, Trash2, AudioLines, Plus, Loader2, Download } from 'lucide-react';
 import { exportFileName, exportWithSignature, prepareExport, saveBlob } from '@/videos/lib/video-export';
@@ -9,7 +9,7 @@ import { Avatar } from '@/shared/components/clip-avatar';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useClipSession } from '@/shared/components/clip-session';
-import { creatorName, formatCount, type ClipVideo } from '@/videos/lib/clip.types';
+import { canDeleteVideo, creatorName, formatCount, type ClipVideo } from '@/videos/lib/clip.types';
 import { VinasoundVideoIntro } from './vinasound-video-intro';
 import { AccountUnavailable } from '@/shared/components/clip-shell';
 import { videoShareUrl } from '@/videos/lib/clip-share';
@@ -55,7 +55,22 @@ function useVideoSocial(v: ClipVideo) {
       .catch(err => toast.error(err instanceof Error ? err.message : 'Téléchargement impossible.'))
       .finally(() => setExporting(null));
   };
-  return { user, liked, busy, like, share, shareOpen, setShareOpen, nativeShare, exporting, download, comments, setComments, report, setReport, reason, setReason, favorite, setFavorite };
+  const isOwner = canDeleteVideo(user?.id, v);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const navigate = useNavigate();
+  const remove = async () => {
+    if (!isOwner || deleting) return;
+    setDeleting(true);
+    const r = await supabase.from('videos').delete().eq('id', v.id);
+    if (r.error) { setDeleting(false); toast.error('Suppression impossible. Réessaie dans un instant.'); return; }
+    if (v.storage_path) await supabase.storage.from('clip-videos').remove([v.storage_path]);
+    setDeleting(false); setConfirmDelete(false);
+    toast.success('Vidéo supprimée');
+    qc.invalidateQueries({ queryKey: ['feed'] }); qc.invalidateQueries({ queryKey: ['own-videos'] });
+    if (window.location.pathname.startsWith('/video/')) navigate({ to: '/' });
+  };
+  return { user, liked, busy, like, share, shareOpen, setShareOpen, nativeShare, exporting, download, comments, setComments, report, setReport, reason, setReason, favorite, setFavorite, isOwner, confirmDelete, setConfirmDelete, deleting, remove };
 }
 function VideoActions({ v, social, playing, extra }: { v: ClipVideo; social: ReturnType<typeof useVideoSocial>; playing: boolean; extra?: ReactNode }) {
   const name = creatorName(v);
@@ -72,7 +87,8 @@ function VideoActions({ v, social, playing, extra }: { v: ClipVideo; social: Ret
       {v.user_id && <ArtistProfileLink id={v.user_id} username={v.profiles?.username} label={`Profil artiste : ${name}`} className="video-record mt-1 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-video-action-background p-1.5 text-sm hover:bg-video-action-background"><span data-playing={playing} className="video-record-photo flex size-full items-center justify-center overflow-hidden rounded-full"><Avatar path={v.profiles?.avatar_path} name={name} className="flex size-full items-center justify-center"/></span></ArtistProfileLink>}
       {extra}
     </aside>
-    <Dialog open={social.shareOpen} onOpenChange={social.setShareOpen}><DialogContent aria-describedby={undefined} className="max-w-sm"><DialogTitle>Partager la vidéo</DialogTitle><ShareTargets title={v.caption || 'VINASOUND'} text={`Regarde cette vidéo de @${name} sur VINASOUND`} url={typeof window === 'undefined' ? '' : videoShareUrl(window.location.origin, v.id)} onNative={social.nativeShare} /><Button variant="outline" disabled={social.exporting !== null} onClick={social.download}>{social.exporting !== null ? <><Loader2 className="animate-spin" />Préparation… {social.exporting} %</> : <><Download />Télécharger en MP4</>}</Button>{social.exporting !== null && <p className="text-xs text-muted-foreground">La signature VINASOUND est ajoutée à la fin. Garde cette page ouverte pendant la préparation.</p>}<Button variant="ghost" onClick={() => { social.setShareOpen(false); if (social.user) social.setReport(true); else toast('Ton compte VINASOUND n’est pas encore relié à cet aperçu.'); }}><Flag/>Signaler la vidéo</Button></DialogContent></Dialog>
+    <Dialog open={social.shareOpen} onOpenChange={social.setShareOpen}><DialogContent aria-describedby={undefined} className="max-w-sm"><DialogTitle>Partager la vidéo</DialogTitle><ShareTargets title={v.caption || 'VINASOUND'} text={`Regarde cette vidéo de @${name} sur VINASOUND`} url={typeof window === 'undefined' ? '' : videoShareUrl(window.location.origin, v.id)} onNative={social.nativeShare} /><Button variant="outline" disabled={social.exporting !== null} onClick={social.download}>{social.exporting !== null ? <><Loader2 className="animate-spin" />Préparation… {social.exporting} %</> : <><Download />Télécharger en MP4</>}</Button>{social.exporting !== null && <p className="text-xs text-muted-foreground">La signature VINASOUND est ajoutée à la fin. Garde cette page ouverte pendant la préparation.</p>}{social.isOwner ? <Button variant="ghost" className="text-destructive hover:text-destructive" onClick={() => { social.setShareOpen(false); social.setConfirmDelete(true); }}><Trash2/>Supprimer ma vidéo</Button> : <Button variant="ghost" onClick={() => { social.setShareOpen(false); if (social.user) social.setReport(true); else toast('Ton compte VINASOUND n’est pas encore relié à cet aperçu.'); }}><Flag/>Signaler la vidéo</Button>}</DialogContent></Dialog>
+    <Dialog open={social.confirmDelete} onOpenChange={o => !social.deleting && social.setConfirmDelete(o)}><DialogContent aria-describedby={undefined} className="max-w-sm"><DialogTitle>Supprimer cette vidéo ?</DialogTitle><p className="text-sm text-muted-foreground">Elle disparaîtra du fil avec ses j’aime et ses commentaires. Cette action est définitive.</p><Button variant="destructive" disabled={social.deleting} onClick={social.remove}>{social.deleting ? <><Loader2 className="animate-spin" />Suppression…</> : <><Trash2 />Supprimer définitivement</>}</Button><Button variant="ghost" disabled={social.deleting} onClick={() => social.setConfirmDelete(false)}>Annuler</Button></DialogContent></Dialog>
     <CommentSheet v={v} open={social.comments} onClose={() => social.setComments(false)} />
     <Dialog open={social.report} onOpenChange={social.setReport}><DialogContent aria-describedby={undefined} className="max-w-sm"><DialogTitle>Signaler cette vidéo</DialogTitle><form className="space-y-4" onSubmit={async e => { e.preventDefault(); if (!social.user || !social.reason.trim()) return; const r = await supabase.from('reports').insert({ user_id: social.user.id, video_id: v.id, reason: social.reason.trim() }); if (r.error) toast.error('Signalement non envoyé.'); else { toast.success('Signalement enregistré'); social.setReport(false); social.setReason(''); } }}><textarea required maxLength={500} value={social.reason} onChange={e => social.setReason(e.target.value)} aria-label="Motif du signalement" placeholder="Motif du signalement" className="w-full rounded-md bg-muted p-3" /><Button type="submit">Envoyer le signalement</Button></form></DialogContent></Dialog>
   </>;
