@@ -17,7 +17,6 @@ import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as ProfilRouteImport } from './routes/profil'
 import { Route as PublierRouteImport } from './routes/publier'
 import { Route as CreateurIdRouteImport } from './routes/createur.$id'
-import { Route as VideoIdRouteImport } from './routes/video.$id'
 import { Route as ApiPublicJobsExpireVideosRouteImport } from './routes/api/public/jobs/expire-videos'
 
 const IndexRoute = IndexRouteImport.update({
@@ -60,11 +59,6 @@ const CreateurIdRoute = CreateurIdRouteImport.update({
   path: '/createur/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VideoIdRoute = VideoIdRouteImport.update({
-  id: '/video/$id',
-  path: '/video/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicJobsExpireVideosRoute =
   ApiPublicJobsExpireVideosRouteImport.update({
     id: '/api/public/jobs/expire-videos',
@@ -81,7 +75,6 @@ export interface FileRoutesByFullPath {
   '/profil': typeof ProfilRoute
   '/publier': typeof PublierRoute
   '/createur/$id': typeof CreateurIdRoute
-  '/video/$id': typeof VideoIdRoute
   '/api/public/jobs/expire-videos': typeof ApiPublicJobsExpireVideosRoute
 }
 export interface FileRoutesByTo {
@@ -93,7 +86,6 @@ export interface FileRoutesByTo {
   '/profil': typeof ProfilRoute
   '/publier': typeof PublierRoute
   '/createur/$id': typeof CreateurIdRoute
-  '/video/$id': typeof VideoIdRoute
   '/api/public/jobs/expire-videos': typeof ApiPublicJobsExpireVideosRoute
 }
 export interface FileRoutesById {
@@ -106,7 +98,6 @@ export interface FileRoutesById {
   '/profil': typeof ProfilRoute
   '/publier': typeof PublierRoute
   '/createur/$id': typeof CreateurIdRoute
-  '/video/$id': typeof VideoIdRoute
   '/api/public/jobs/expire-videos': typeof ApiPublicJobsExpireVideosRoute
 }
 export interface FileRouteTypes {
@@ -120,7 +111,6 @@ export interface FileRouteTypes {
     | '/profil'
     | '/publier'
     | '/createur/$id'
-    | '/video/$id'
     | '/api/public/jobs/expire-videos'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -132,7 +122,6 @@ export interface FileRouteTypes {
     | '/profil'
     | '/publier'
     | '/createur/$id'
-    | '/video/$id'
     | '/api/public/jobs/expire-videos'
   id:
     | '__root__'
@@ -144,7 +133,6 @@ export interface FileRouteTypes {
     | '/profil'
     | '/publier'
     | '/createur/$id'
-    | '/video/$id'
     | '/api/public/jobs/expire-videos'
   fileRoutesById: FileRoutesById
 }
@@ -157,7 +145,6 @@ export interface RootRouteChildren {
   ProfilRoute: typeof ProfilRoute
   PublierRoute: typeof PublierRoute
   CreateurIdRoute: typeof CreateurIdRoute
-  VideoIdRoute: typeof VideoIdRoute
   ApiPublicJobsExpireVideosRoute: typeof ApiPublicJobsExpireVideosRoute
 }
 
@@ -219,13 +206,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CreateurIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/video/$id': {
-      id: '/video/$id'
-      path: '/video/$id'
-      fullPath: '/video/$id'
-      preLoaderRoute: typeof VideoIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/jobs/expire-videos': {
       id: '/api/public/jobs/expire-videos'
       path: '/api/public/jobs/expire-videos'
@@ -245,7 +225,6 @@ const rootRouteChildren: RootRouteChildren = {
   ProfilRoute: ProfilRoute,
   PublierRoute: PublierRoute,
   CreateurIdRoute: CreateurIdRoute,
-  VideoIdRoute: VideoIdRoute,
   ApiPublicJobsExpireVideosRoute: ApiPublicJobsExpireVideosRoute,
 }
 export const routeTree = rootRouteImport

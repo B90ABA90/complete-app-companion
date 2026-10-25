@@ -7,8 +7,11 @@ import { VinasoundBrand } from './vinasound-brand';
 const NAV = [{ to: '/', label: 'Vidéos', Icon: Clapperboard }] as const;
 const isActive = (_path: string, _to: string) => true;
 
-export function ClipNav({ standalone = false }: { standalone?: boolean }) {
+export function ClipNav({ standalone = false, inline = false }: { standalone?: boolean; inline?: boolean }) {
   const path = useRouterState({ select: s => s.location.pathname });
+  if (inline) return <nav aria-label="Navigation principale" className="flex gap-1">
+    {NAV.map(({ to, label, Icon }) => { const on = isActive(path, to); return <Link key={to} to={to} aria-current={on ? 'page' : undefined} className={`relative flex h-11 items-center gap-2 px-3 text-sm font-semibold transition-colors ${on ? 'text-primary after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:rounded-full after:bg-primary' : 'text-muted-foreground hover:text-foreground'}`}><Icon className="size-4" />{label}</Link>; })}
+  </nav>;
   return <nav aria-label="Navigation principale" className={`clip-nav absolute inset-x-0 bottom-0 z-20 grid grid-cols-1 border-t pb-[env(safe-area-inset-bottom)] ${standalone ? '' : 'md:hidden'}`}>
     {NAV.map(({ to, label, Icon }) => { const on = isActive(path, to); return <Link key={to} to={to} aria-label={label} aria-current={on ? 'page' : undefined} className={`relative flex h-16 min-w-0 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors duration-200 active:scale-95 ${on ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
       {on && <span aria-hidden className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />}
