@@ -1,5 +1,5 @@
 # Clip improvements
-- [ ] Verify profile/photo privacy restrictions and visible-video social reads against Lovable Cloud.
+- [x] Restrict profile/photo discovery and social reads: applied policies verified in Cloud, anonymous private-profile/follow denial and public artist visibility tests pass; feed opens without runtime errors. Avatar bucket stays private.
 - [x] Separate the repository into `src/videos`, `src/lives` and `src/shared` so the owner can download the git and take one space at a time; routes untouched, import map rewritten, separation rule test added, 38 tests pass and Videos ↔ Lives verified in the browser.
 - [x] Keep the video feed independent and make its Lives navigation accessible on desktop as well as mobile, without removing any live screens; separate route tests and browser Videos → Lives → Videos verified.
 - [x] Deliver standalone PHP/MySQL HTML/CSS/JavaScript video ZIP with installation guide, SQL schema and tests; verified real MariaDB/WebM publication, playback, comments, likes, private access/CSRF/owner deletion and desktop/mobile. Lovable app unchanged. External hosting/account bridge and original screenshot error remain unverified without site configuration/code.
