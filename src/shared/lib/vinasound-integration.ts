@@ -5,9 +5,9 @@ export const vinasoundIntegration: VinasoundIntegration = {
   artistHandles: {},
   // Enable only after the main site supplies the exact artist handle as username.
   useProfileUsername: false,
-  // Optional main-site subscription page, e.g. https://vinasound.fun/{artist}?...
+  // Subscriptions are completed on the existing main-site artist profile.
   // The main site must verify its own session and confirm the subscription there.
-  followUrlTemplate: '',
+  followUrlTemplate: 'https://vinasound.fun/{artist}',
   // Main account page; leave empty until its real URL is known.
   accountUrl: '',
 };
