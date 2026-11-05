@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Clip architecture
+- Profile reads are scoped to owners, current public video participants, message counterparts and notification actors; avatar reads require ownership or the exact visible profile photo, so unused files and inactive profiles stay private.
 - Resolve video artist labels from account display names and explicit main-site mappings before legacy names, suppress generated guest IDs, and drive the bottom record photo from actual media playback events so it stops on pause, buffering and end.
 - Auth signup creates profiles through the application lifecycle trigger; authenticated publishing calls an idempotent auth.uid()-scoped profile repair for pre-existing remix sessions so missing profiles cannot break ownership foreign keys.
 - Video retention is enforced by immutable database deadlines and restrictive read policies; managed authenticated HTTP cleanup removes private Storage files before deleting rows, retaining failed rows for retry. Readers cap signed URLs to the deadline and mounted media stops at expiry.
