@@ -8,6 +8,13 @@
       "when": 1792911917025,
       "tag": "0000_restore_profile_signup_trigger",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793862732570,
+      "tag": "0001_restrict_profile_and_social_privacy",
+      "breakpoints": true
     }
   ]
 }

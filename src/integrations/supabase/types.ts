@@ -854,6 +854,7 @@ export type Database = {
         Args: { _count: number; _live: string }
         Returns: number
       }
+      can_read_clip_profile: { Args: { _profile: string }; Returns: boolean }
       can_view_live: { Args: { _live: string }; Returns: boolean }
       ensure_clip_profile: { Args: never; Returns: undefined }
       ensure_wallet: { Args: never; Returns: number }
