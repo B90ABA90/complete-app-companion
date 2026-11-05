@@ -9,8 +9,11 @@ describe('Main VINASOUND accounts', () => {
   it('does not guess a main artist account from an anonymous video username', () => {
     expect(artistDestination('unlinked-user', 'ABOULE9')).toBeUndefined();
   });
-  it('does not claim a subscription before the main-site option is completed', () => {
-    expect(artistDestination('video-user', null, 'follow', config)).toBeUndefined();
+  it('opens the main-site username profile for the subscription action', () => {
+    expect(artistDestination('video-user', null, 'follow', config)).toBe('https://vinasound.fun/ABOULE9');
+  });
+  it('does not infer the subscription destination for an unlinked account', () => {
+    expect(artistDestination('unlinked-user', 'ABOULE9', 'follow')).toBeUndefined();
   });
   it('routes a configured follow action to the main site', () => {
     expect(artistDestination('video-user', null, 'follow', { ...config, followUrlTemplate: 'https://vinasound.fun/{artist}?action=follow' })).toBe('https://vinasound.fun/ABOULE9?action=follow');
