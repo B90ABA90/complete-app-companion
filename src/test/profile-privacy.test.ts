@@ -4,8 +4,11 @@ import { loadEnv } from 'vite';
 // Exercise the real Data API as a visitor, not the privileged migration client.
 const env = loadEnv('development', process.cwd(), 'VITE_');
 async function read(resource: string) {
-  const response = await fetch(`${env.VITE_SUPABASE_URL}/rest/v1/${resource}`, {
-    headers: { apikey: env.VITE_SUPABASE_PUBLISHABLE_KEY },
+  const url = env['VITE_SUPABASE_URL'];
+  const key = env['VITE_SUPABASE_PUBLISHABLE_KEY'];
+  if (!url || !key) throw new Error('Cloud test configuration is missing');
+  const response = await fetch(`${url}/rest/v1/${resource}`, {
+    headers: { apikey: key },
   });
   expect(response.status).toBe(200);
   return response.json();
